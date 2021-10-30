@@ -12,9 +12,9 @@ pub fn github_event_repo_url() -> String {
 
 pub fn parse_env(key: &str) -> String {
   env::var_os(key)
-    .unwrap()
+    .expect("Environment variable is undefined")
     .into_string()
-    .expect("Invalid environment variable")
+    .expect("Environment into string is failed")
 }
 
 pub fn git(args: Vec<&str>) {
