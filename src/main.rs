@@ -1,10 +1,10 @@
 mod github_event;
 mod helpers;
 
-use helpers::github_get_commits_in_pr;
-
 use crate::github_event::GithubEventAction;
+use helpers::github_get_commits_in_pr;
 use std::{env, fs};
+use tokio::runtime::Handle;
 
 use helpers::*;
 
@@ -26,7 +26,15 @@ async fn main() {
 
   let new_branch_name = create_new_branch_by_commits(pr_number, token.clone()).await;
 
-  create_new_pull_request(base_branch, new_branch_name, pr_number, token).await;
+  let pr_title = format!("chore: backport {}", pr_number);
+  github_open_pull_request(
+    token,
+    new_branch_name,
+    base_branch,
+    pr_title,
+    "test1".to_string(),
+  )
+  .await;
 
   println!("Hello, world!");
 }
@@ -56,14 +64,4 @@ async fn create_new_branch_by_commits(pr_number: i64, token: String) -> String {
   git(["push", "-u", "origin", new_branch_name].to_vec());
 
   new_branch_name.to_string()
-}
-
-async fn create_new_pull_request(
-  base_branch: String,
-  new_branch: String,
-  pr_number: i64,
-  token: String,
-) {
-  let pr_title = format!("chore: backport {}", pr_number);
-  github_open_pull_request(token, new_branch, base_branch, pr_title, "test1".to_string());
 }
