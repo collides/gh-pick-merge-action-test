@@ -1,5 +1,4 @@
-FROM rust:latest
-
+FROM rust:alpine
 
 RUN apk update
 RUN apk add git
