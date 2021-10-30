@@ -55,9 +55,9 @@ async fn create_new_branch_by_commits(pr_number: i64, token: String) -> String {
   );
 
 
-  let branchs = git(["branch"].to_vec()).stdout;
+  let branch = git(["branch"].to_vec()).stdout;
 
-  println!("{:?}", branchs);
+  println!("{:?}", String::from_utf8(branch).unwrap());
 
 
   println!("new branch name:{}", new_branch_name);
