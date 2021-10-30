@@ -48,7 +48,6 @@ pub fn get_github_api_headers(token: String) -> HeaderMap {
   headers
 }
 
-#[tokio::main]
 pub async fn github_open_pull_request(
   token: String,
   head: String,
