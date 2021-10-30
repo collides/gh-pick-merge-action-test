@@ -54,10 +54,16 @@ async fn create_new_branch_by_commits(pr_number: i64, token: String) -> String {
     .to_vec(),
   );
 
+
+  let branchs = git(["branch"].to_vec()).stdout;
+
+  println!("{:?}", branchs);
+
+
   println!("new branch name:{}", new_branch_name);
 
   for commit_hash in commits {
-    git(["cherry-pick", commit_hash.as_str()].to_vec())
+    git(["cherry-pick", commit_hash.as_str()].to_vec());
   }
 
   git(["push", "-u", "origin", new_branch_name].to_vec());
