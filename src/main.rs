@@ -11,7 +11,7 @@ use helpers::*;
 async fn main() {
   let token = parse_env("GITHUB_TOKEN");
 
-  git_setup();
+  git_setup(token.clone());
 
   let github_event_path = env::var_os("GITHUB_EVENT_PATH").unwrap();
   let github_event = fs::read_to_string(github_event_path).expect("read to string is failed");
