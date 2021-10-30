@@ -5,6 +5,8 @@ on:
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
+    env: 
+      GIT_REPO: gh-pick-merge-action
     steps:
       - name: checkout
         uses: actions/checkout@v1
