@@ -1,10 +1,16 @@
 mod github_event;
 mod helpers;
 
+// use helpers::github_get_commits_in_pr;
+
 use crate::github_event::GithubEventAction;
 use std::{env, fs};
 
 // use helpers::*;
+
+// fn backport_commit(baseBranch: String, prNumber: i64, token: String) {
+//   let commits = github_get_commits_in_pr(prNumber, token);
+// }
 
 fn main() {
   // let token = parseEnv("GITHUB_TOKEN");
@@ -17,7 +23,12 @@ fn main() {
   let res: GithubEventAction =
     serde_json::from_str(&github_event).expect("convert github event is failed");
 
-  println!("{:?}", res);
+  // let base_branch = res.base._ref;
+
+  // let pr_number = res.pull_request.number;
+
+  // backport_commit(base_branch, pr_number, token);
 
   println!("Hello, world!");
+  println!("{:?}", res);
 }
