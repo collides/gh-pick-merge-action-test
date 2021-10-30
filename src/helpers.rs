@@ -39,8 +39,9 @@ pub fn git_setup(token: String) {
 pub fn get_github_api_headers(token: String) -> HeaderMap {
   let mut headers: HeaderMap = HeaderMap::new();
 
-  let authorization = format!("Bearer {}", token);
+  let authorization = format!("token {}", token);
 
+  headers.append("User-Agent", "gh-pick-merge-action".parse().unwrap());
   headers.append("Authorization", authorization.parse().unwrap());
   headers.append("content-type", "application/json".parse().unwrap());
   headers.append("accept", "application/vnd.github.v3+json".parse().unwrap());
@@ -90,7 +91,7 @@ pub async fn github_get_commits_in_pr(pr_number: i64, token: String) -> Vec<Stri
     .await
     .expect("Failed to get commits");
 
-    println!("{:?}", response.text().await);
+  println!("{:?}", response.text().await);
 
   // for commit in response {
   //   commits.push(commit.sha);
