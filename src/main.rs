@@ -24,7 +24,7 @@ async fn main() {
 
   let pr_number = res.number;
 
-  let new_branch_name = create_new_branch_by_commits(pr_number, token).await;
+  let new_branch_name = create_new_branch_by_commits(pr_number, token.clone()).await;
 
   create_new_pull_request(base_branch, new_branch_name, pr_number, token).await;
 
@@ -35,9 +35,17 @@ async fn create_new_branch_by_commits(pr_number: i64, token: String) -> String {
   let commits = github_get_commits_in_pr(pr_number, token).await;
 
   let new_branch_name = "zyh/test-1";
-  let origin_new_branch_name = format!("origin/{}", new_branch_name).as_str();
+  let origin_new_branch_name = format!("origin/{}", new_branch_name);
 
-  git(["switch", "-c", new_branch_name, origin_new_branch_name].to_vec());
+  git(
+    [
+      "switch",
+      "-c",
+      new_branch_name,
+      origin_new_branch_name.as_str(),
+    ]
+    .to_vec(),
+  );
 
   println!("new branch name:{}", new_branch_name);
 
@@ -51,11 +59,17 @@ async fn create_new_branch_by_commits(pr_number: i64, token: String) -> String {
 }
 
 async fn create_new_pull_request(
-  baseBranch: String,
-  newBranch: String,
+  base_branch: String,
+  new_branch: String,
   pr_number: i64,
   token: String,
 ) {
   let pr_title = format!("chore: backport {}", pr_number);
-  github_open_pull_request(token, newBranch, baseBranch, pr_title, "test1".to_string());
+  github_open_pull_request(
+    token,
+    new_branch,
+    base_branch,
+    pr_title,
+    "test1".to_string(),
+  );
 }

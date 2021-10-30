@@ -1,7 +1,7 @@
 use reqwest::header::HeaderMap;
 
 use crate::github_event::*;
-use std::{env, future::Future, process::Command};
+use std::{env, process::Command};
 
 pub fn github_event_repo_url() -> String {
   let repo = parse_env("GITHUB_REPOSITORY");
@@ -75,10 +75,7 @@ pub async fn github_open_pull_request(
     .expect("Failed to create pull request");
 }
 
-pub async fn github_get_commits_in_pr(
-  pr_number: i64,
-  token: String,
-) -> Vec<String> {
+pub async fn github_get_commits_in_pr(pr_number: i64, token: String) -> Vec<String> {
   let headers = get_github_api_headers(token);
   let repo_url = github_event_repo_url();
   let client = reqwest::Client::new();
