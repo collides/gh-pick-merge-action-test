@@ -1,7 +1,7 @@
 use reqwest::header::HeaderMap;
 
 use crate::github_event::*;
-use std::{env, process::Command};
+use std::{env, process::{Command, Output}};
 
 pub fn github_event_repo_url() -> String {
   let repo = parse_env("GITHUB_REPOSITORY");
@@ -17,11 +17,11 @@ pub fn parse_env(key: &str) -> String {
     .expect("Environment into string is failed")
 }
 
-pub fn git(args: Vec<&str>) {
+pub fn git(args: Vec<&str>) -> Output {
   Command::new("git")
     .args(args)
     .output()
-    .expect("git command failed");
+    .expect("git command failed")
 }
 
 pub fn git_setup() {
@@ -35,6 +35,11 @@ pub fn git_setup() {
 
   git(["config", "user.name", "github action"].to_vec());
   git(["config", "user.email", "action@github.com"].to_vec());
+
+  let remote = git(["remote", "-v"].to_vec()).stdout;
+
+  println!("{:?}", remote);
+
 }
 
 pub fn get_github_api_headers(token: String) -> HeaderMap {
