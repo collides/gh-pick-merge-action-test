@@ -1,17 +1,17 @@
 use reqwest::header::HeaderMap;
 
 use crate::github_event::*;
-use std::{env, process::Command};
+use std::{env, future::Future, process::Command};
 
 pub fn github_event_repo_url() -> String {
-  let repo = parseEnv("GITHUB_REPOSITORY");
-  let api_url = parseEnv("GITHUB_API_URL");
+  let repo = parse_env("GITHUB_REPOSITORY");
+  let api_url = parse_env("GITHUB_API_URL");
 
   format!("{}/repos/{}", api_url, repo)
 }
 
-pub fn parseEnv(env: &str) -> String {
-  env::var_os("GITHUB_TOKEN")
+pub fn parse_env(key: &str) -> String {
+  env::var_os(key)
     .unwrap()
     .into_string()
     .expect("Invalid environment variable")
@@ -25,8 +25,8 @@ pub fn git(args: Vec<&str>) {
 }
 
 pub fn git_setup(token: String) {
-  let repo = parseEnv("GIT_REPO");
-  let actor = parseEnv("GITHUB_ACTOR");
+  let repo = parse_env("GIT_REPO");
+  let actor = parse_env("GITHUB_ACTOR");
 
   let url = format!("https://{}:{}@github.com/{}.git", actor, token, repo);
 
@@ -39,20 +39,52 @@ pub fn git_setup(token: String) {
 pub fn get_github_api_headers(token: String) -> HeaderMap {
   let mut headers: HeaderMap = HeaderMap::new();
 
-  headers.append("Authorization", r#"Bearer {token}"#.parse().unwrap());
+  let authorization = format!("Bearer {}", token);
+
+  headers.append("Authorization", authorization.parse().unwrap());
   headers.append("content-type", "application/json".parse().unwrap());
   headers.append("accept", "application/vnd.github.v3+json".parse().unwrap());
   headers
 }
 
 #[tokio::main]
-pub async fn github_get_commits_in_pr(prNumber: i64, token: String) -> Vec<String> {
+pub async fn github_open_pull_request(
+  token: String,
+  head: String,
+  base: String,
+  title: String,
+  body: String,
+) {
   let headers = get_github_api_headers(token);
-  let repoUrl = github_event_repo_url();
+  let client = reqwest::Client::new();
+  let repo_url = github_event_repo_url();
+
+  let body = format!(
+    "`{{`head:{},base:{},title:{},body:{}`}}`",
+    head, base, title, body
+  );
+
+  let url = format!("{}/pulls", repo_url);
+
+  client
+    .post(url)
+    .body(body)
+    .headers(headers)
+    .send()
+    .await
+    .expect("Failed to create pull request");
+}
+
+pub async fn github_get_commits_in_pr(
+  pr_number: i64,
+  token: String,
+) -> Vec<String> {
+  let headers = get_github_api_headers(token);
+  let repo_url = github_event_repo_url();
   let client = reqwest::Client::new();
   let mut commits = Vec::new();
 
-  let url = format!("{}/pulls/{}/commits", repoUrl, prNumber);
+  let url = format!("{}/pulls/{}/commits", repo_url, pr_number);
 
   let response = client
     .get(url)
