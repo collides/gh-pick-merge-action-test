@@ -4,7 +4,6 @@ mod helpers;
 use crate::github_event::GithubEventAction;
 use helpers::github_get_commits_in_pr;
 use std::{env, fs};
-use tokio::runtime::Handle;
 
 use helpers::*;
 
@@ -12,7 +11,7 @@ use helpers::*;
 async fn main() {
   let token = parse_env("GITHUB_TOKEN");
 
-  git_setup(token.clone());
+  git_setup();
 
   let github_event_path = env::var_os("GITHUB_EVENT_PATH").unwrap();
   let github_event = fs::read_to_string(github_event_path).expect("read to string is failed");

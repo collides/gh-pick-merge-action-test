@@ -7,7 +7,6 @@ pub fn github_event_repo_url() -> String {
   let repo = parse_env("GITHUB_REPOSITORY");
   let api_url = parse_env("GITHUB_API_URL");
 
-  println!("{:?}", repo);
   format!("{}/repos/{}", api_url, repo)
 }
 
@@ -25,13 +24,12 @@ pub fn git(args: Vec<&str>) {
     .expect("git command failed");
 }
 
-pub fn git_setup(token: String) {
+pub fn git_setup() {
   let repo = parse_env("GIT_REPO");
   let actor = parse_env("GITHUB_ACTOR");
+  // https://github.com/collides/gh-pick-merge-action.git
 
-  let url = format!("https://{}:{}@github.com/{}.git", actor, token, repo);
-
-  println!("{:?},{:?},{:?}", actor, repo, token);
+  let url = format!("https://github.com/{}/{}.git", actor, repo);
 
   git(["remote", "set-url", "--push", "origin", url.as_str()].to_vec());
 
