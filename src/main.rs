@@ -81,6 +81,7 @@ async fn create_new_branch_by_commits(to_branch: String, pr_number: i64, token: 
 
 #[test]
 fn test_push() {
+  
   let push = git(["push", "-u", "origin", "zyh/test1"].to_vec());
 
   println!("{:?}", String::from_utf8(push.stderr).unwrap());
