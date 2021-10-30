@@ -12,7 +12,6 @@ pub struct GithubEventActionPullRequest {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GithubEventAction {
-  action: String,
   pub base: GithubEventActionBase,
   pub pull_request: GithubEventActionPullRequest
 }
