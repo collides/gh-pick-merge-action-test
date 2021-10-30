@@ -24,12 +24,9 @@ async fn main() {
 
   let pr_number = res.number;
 
-   github_get_commits_in_pr(pr_number, token).await;
+  let new_branch_name = create_new_branch_by_commits(pr_number, token.clone()).await;
 
-
-  // let new_branch_name = create_new_branch_by_commits(pr_number, token.clone()).await;
-
-  // create_new_pull_request(base_branch, new_branch_name, pr_number, token).await;
+  create_new_pull_request(base_branch, new_branch_name, pr_number, token).await;
 
   println!("Hello, world!");
 }
@@ -68,11 +65,5 @@ async fn create_new_pull_request(
   token: String,
 ) {
   let pr_title = format!("chore: backport {}", pr_number);
-  github_open_pull_request(
-    token,
-    new_branch,
-    base_branch,
-    pr_title,
-    "test1".to_string(),
-  );
+  github_open_pull_request(token, new_branch, base_branch, pr_title, "test1".to_string());
 }
