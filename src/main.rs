@@ -66,7 +66,7 @@ async fn create_new_branch_by_commits(to_branch: String, pr_number: i64, token: 
     git(["cherry-pick", commit_hash.as_str()].to_vec());
   }
 
-  let push = git(["push", "origin", new_branch_name].to_vec()).stderr;
+  let push = git(["push", "-u", "origin", new_branch_name].to_vec()).stderr;
 
   let current_branch = git(["rev-parse", "--abbrev-ref", "HEAD"].to_vec()).stdout;
 
