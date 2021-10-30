@@ -1,23 +1,23 @@
 use serde::{Deserialize, Serialize};
-
 #[derive(Serialize, Deserialize, Debug)]
-pub struct GithubEventActionBase {
-  pub _ref: String,
+#[serde()]
+pub struct GithubActionPullRequestBase {
+  #[serde(rename(deserialize = "ref"))]
+  pub _ref: String
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct GithubEventActionPullRequest {
+pub struct GithubActionPullRequest {
   pub number: i64,
+  pub base: GithubActionPullRequestBase,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GithubEventAction {
-  pub base: GithubEventActionBase,
-  pub pull_request: GithubEventActionPullRequest
+  action: String,
+  pub number: i64,
+  pub pull_request: GithubActionPullRequest,
 }
-
-
-
 
 // ------ Response ------
 
