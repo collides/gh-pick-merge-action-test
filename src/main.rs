@@ -23,7 +23,8 @@ async fn main() {
 
   let pr_number = res.number;
 
-  let new_branch_name = create_new_branch_by_commits(base_branch.clone(),pr_number, token.clone()).await;
+  let new_branch_name =
+    create_new_branch_by_commits(base_branch.clone(), pr_number, token.clone()).await;
 
   let pr_title = format!("chore: backport {}", pr_number);
   github_open_pull_request(
@@ -38,7 +39,7 @@ async fn main() {
   println!("Hello, world!");
 }
 
-async fn create_new_branch_by_commits(to_branch: String,pr_number: i64, token: String) -> String {
+async fn create_new_branch_by_commits(to_branch: String, pr_number: i64, token: String) -> String {
   let commits = github_get_commits_in_pr(pr_number, token).await;
 
   let new_branch_name = "zyh/test-1";
@@ -54,21 +55,33 @@ async fn create_new_branch_by_commits(to_branch: String,pr_number: i64, token: S
     .to_vec(),
   );
 
-
   let branch = git(["branch"].to_vec()).stdout;
 
   println!("{:?}", String::from_utf8(branch).unwrap());
 
-
   println!("new branch name:{}", new_branch_name);
 
   for commit_hash in commits {
+    println!("commit: {:?}", commit_hash);
     git(["cherry-pick", commit_hash.as_str()].to_vec());
   }
 
-  let push = git(["push", "-u", "origin", new_branch_name].to_vec()).stdout;
+  let push = git(["push", "-u", "origin", new_branch_name].to_vec()).stderr;
 
-  println!("{:?}", String::from_utf8(push).unwrap());
+  let current_branch = git(["rev-parse", "--abbrev-ref", "HEAD"].to_vec()).stdout;
+
+  println!(
+    "error branch: {:?}, current_branch: {:?}",
+    String::from_utf8(push).unwrap(),
+    String::from_utf8(current_branch).unwrap()
+  );
 
   new_branch_name.to_string()
+}
+
+#[test]
+fn test_push() {
+  let push = git(["push", "-u", "origin", "zyh/test1"].to_vec());
+
+  println!("{:?}", String::from_utf8(push.stderr).unwrap());
 }
