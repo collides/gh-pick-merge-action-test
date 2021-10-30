@@ -88,13 +88,12 @@ pub async fn github_get_commits_in_pr(pr_number: i64, token: String) -> Vec<Stri
     .headers(headers)
     .send()
     .await
-    .expect("Failed to get commits")
-    .json::<Vec<GithubGetCommitResponseItem>>()
-    .await
-    .expect("Failed to parse json");
+    .expect("Failed to get commits");
 
-  for commit in response {
-    commits.push(commit.sha);
-  }
+    println!("{:?}", response.text().await);
+
+  // for commit in response {
+  //   commits.push(commit.sha);
+  // }
   commits
 }

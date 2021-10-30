@@ -24,9 +24,12 @@ async fn main() {
 
   let pr_number = res.number;
 
-  let new_branch_name = create_new_branch_by_commits(pr_number, token.clone()).await;
+   github_get_commits_in_pr(pr_number, token).await;
 
-  create_new_pull_request(base_branch, new_branch_name, pr_number, token).await;
+
+  // let new_branch_name = create_new_branch_by_commits(pr_number, token.clone()).await;
+
+  // create_new_pull_request(base_branch, new_branch_name, pr_number, token).await;
 
   println!("Hello, world!");
 }
