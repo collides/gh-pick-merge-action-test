@@ -73,6 +73,8 @@ pub async fn github_open_pull_request(
     .send()
     .await
     .expect("Failed to create pull request");
+
+  println!("Create pull request success!");
 }
 
 pub async fn github_get_commits_in_pr(pr_number: i64, token: String) -> Vec<String> {
