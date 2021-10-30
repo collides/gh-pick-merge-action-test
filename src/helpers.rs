@@ -38,7 +38,7 @@ pub fn git_setup() {
 
   let remote = git(["remote", "-v"].to_vec()).stdout;
 
-  println!("{:?}", remote);
+  println!("{:?}", String::from_utf8(remote).unwrap());
 
 }
 
