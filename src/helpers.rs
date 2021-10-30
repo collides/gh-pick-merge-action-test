@@ -7,6 +7,7 @@ pub fn github_event_repo_url() -> String {
   let repo = parse_env("GITHUB_REPOSITORY");
   let api_url = parse_env("GITHUB_API_URL");
 
+  println!("{:?}", repo);
   format!("{}/repos/{}", api_url, repo)
 }
 
@@ -29,6 +30,8 @@ pub fn git_setup(token: String) {
   let actor = parse_env("GITHUB_ACTOR");
 
   let url = format!("https://{}:{}@github.com/{}.git", actor, token, repo);
+
+  println!("{:?},{:?},{:?}", actor, repo, token);
 
   git(["remote", "set-url", "--push", "origin", url.as_str()].to_vec());
 
