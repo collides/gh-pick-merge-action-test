@@ -114,12 +114,20 @@ pub async fn github_open_pull_request(head: String, base: String, title: String,
 
   let url = format!("{}/pulls", repo_url);
 
-  client
+  let response = client
     .post(url)
     .body(body)
     .send()
     .await
     .expect("Failed to create pull request");
+
+  println!(
+    "{}",
+    response
+      .text()
+      .await
+      .expect("Failed to create pull request")
+  );
 }
 
 pub async fn github_get_commits_in_pr(pr_number: i64) -> Vec<String> {
