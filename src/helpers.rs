@@ -3,16 +3,9 @@ use reqwest::Client;
 
 use crate::github_event::*;
 use std::{
-  env,
+  env, fs,
   process::{Command, Output},
 };
-
-pub fn github_event_repo_url() -> String {
-  let repo = parse_env("GITHUB_REPOSITORY");
-  let api_url = parse_env("GITHUB_API_URL");
-
-  format!("{}/repos/{}", api_url, repo)
-}
 
 pub fn parse_env(key: &str) -> String {
   env::var_os(key)
@@ -21,15 +14,37 @@ pub fn parse_env(key: &str) -> String {
     .expect("Environment into string is failed")
 }
 
-pub fn git(args: Vec<&str>) -> Output {
+pub fn get_event_action() -> GithubEventAction {
+  let github_event_path = env::var_os("GITHUB_EVENT_PATH").unwrap();
+  let github_event_string =
+    fs::read_to_string(github_event_path).expect("read to string is failed");
+
+  serde_json::from_str::<GithubEventAction>(&github_event_string)
+    .expect("convert to github event is failed")
+}
+
+pub fn github_event_repo_url() -> String {
+  let repo = parse_env("GITHUB_REPOSITORY");
+  let api_url = parse_env("GITHUB_API_URL");
+
+  format!("{}/repos/{}", api_url, repo)
+}
+
+pub fn git(args: Vec<&str>) -> Option<Output> {
   let output = Command::new("git")
     .args(args)
     .output()
     .expect("git command failed");
 
-  println!("git output: {}", output.status);
+  if output.status.success() == false {
+    println!(
+      "git command failed: {:?}, {:?}",
+      output.status, output.stderr
+    );
+    return None;
+  }
 
-  output
+  Some(output)
 }
 
 pub fn fetch_github_api_client() -> Client {
@@ -41,7 +56,8 @@ pub fn fetch_github_api_client() -> Client {
     .expect("Initial github api client is failed")
 }
 
-pub fn git_setup(github_token: String) {
+pub fn git_setup() {
+  let github_token = parse_env("GITHUB_TOKEN");
   let repo = parse_env("GITHUB_REPOSITORY");
   let actor = parse_env("GITHUB_ACTOR");
 
@@ -67,6 +83,22 @@ pub fn get_github_api_headers() -> HeaderMap {
   headers
 }
 
+pub async fn github_pull_request_push_comment(pr_number: i64, comment: String) {
+  let client = fetch_github_api_client();
+  let repo_url = github_event_repo_url();
+
+  let body = format!(r#"{{"body":"{}"}}"#, comment);
+
+  let url = format!("{}/issues/${}/comments", repo_url, pr_number);
+
+  client
+    .post(url)
+    .body(body)
+    .send()
+    .await
+    .expect("Failed to create pull request comment");
+}
+
 pub async fn github_open_pull_request(head: String, base: String, title: String, body: String) {
   let client = fetch_github_api_client();
 
@@ -79,15 +111,12 @@ pub async fn github_open_pull_request(head: String, base: String, title: String,
 
   let url = format!("{}/pulls", repo_url);
 
-  let response = client
+  client
     .post(url)
     .body(body)
     .send()
     .await
-    .expect("Failed to create pull request")
-    .text();
-
-  println!("pull request response: {:?}", response.await);
+    .expect("Failed to create pull request");
 }
 
 pub async fn github_get_commits_in_pr(pr_number: i64) -> Vec<String> {
