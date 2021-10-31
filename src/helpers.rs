@@ -39,7 +39,8 @@ pub fn git(args: Vec<&str>) -> Option<Output> {
   if output.status.success() == false {
     println!(
       "git command failed: {:?}, {:?}",
-      output.status, output.stderr
+      output.status,
+      String::from_utf8(output.stderr)
     );
     return None;
   }
