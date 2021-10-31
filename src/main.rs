@@ -41,9 +41,9 @@ async fn main() {
 async fn create_new_branch_by_commits(to_branch: String, pr_number: i64) -> String {
   let commits = github_get_commits_in_pr(pr_number).await;
 
-  let utc: DateTime<Utc> = Utc::now();
+  let timestamp: i64 = Utc::now().timestamp();
 
-  let new_branch_name = format!("bot/auto-pick-{}-{:?}", to_branch, utc);
+  let new_branch_name = format!("bot/auto-pick-{}-{:?}", to_branch, timestamp);
   let origin_to_branch_name = format!("origin/{}", to_branch);
 
   let response = git(
