@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v1
-      - name: cargo build
-        run: cargo build --release
-      - name: cargo run
-        run: cargo run
+      - name: run script
+        run: |
+        curl -O https://github.com/collides/gh-pick-merge/releases/download/0.1.0/gh-pick-merge ./
+        ./gh-pick-merge
