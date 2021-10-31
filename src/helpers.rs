@@ -72,7 +72,7 @@ pub async fn github_open_pull_request(
   let repo_url = github_event_repo_url();
 
   let body = format!(
-    "`{{`head:{},base:{},title:{},body:{}`}}`",
+    "{{head:{},base:{},title:{},body:{}}}",
     head, base, title, body
   );
 
