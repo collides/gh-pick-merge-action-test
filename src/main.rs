@@ -23,15 +23,17 @@ async fn main() {
   let body = "auto pick merge".to_string();
 
   github_open_pull_request(new_branch_name, "develop".to_string(), pr_title, body).await;
-
-  // test
-  github_pull_request_push_comment(pr_number, "test1".to_string()).await;
+  github_pull_request_push_comment(pr_number, "test".to_string()).await;
 }
 
 fn generate_new_branch_name(to_branch: String) -> String {
   let timestamp: i64 = Utc::now().timestamp();
 
   format!("bot/auto-pick-{}-{:?}", to_branch, timestamp)
+}
+
+fn format_error_pick_comment(hash: Vec<String>) -> String {
+  format!("Need to handle errors: {:?}", hash)
 }
 
 async fn create_new_branch_by_commits(to_branch: String, pr_number: i64) -> Option<String> {
@@ -53,6 +55,9 @@ async fn create_new_branch_by_commits(to_branch: String, pr_number: i64) -> Opti
   let not_matched_hash = pick_commits(pr_number).await;
 
   if not_matched_hash.len() > 0 {
+    let comment = format_error_pick_comment(not_matched_hash);
+
+    github_pull_request_push_comment(pr_number, comment).await;
     return None;
   }
 
