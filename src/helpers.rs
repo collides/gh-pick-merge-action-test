@@ -22,10 +22,14 @@ pub fn parse_env(key: &str) -> String {
 }
 
 pub fn git(args: Vec<&str>) -> Output {
-  Command::new("git")
+  let output = Command::new("git")
     .args(args)
     .output()
-    .expect("git command failed")
+    .expect("git command failed");
+
+  println!("git output: {}", output.status);
+
+  output
 }
 
 pub fn fetch_github_api_client() -> Client {
