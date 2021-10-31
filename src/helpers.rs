@@ -38,14 +38,6 @@ pub fn git_setup(github_token: String) {
 
   git(["config", "user.email", "action@github.com"].to_vec());
   git(["config", "user.name", "github action"].to_vec());
-
-  let remote = git(["remote", "-v"].to_vec()).stdout;
-
-  println!("{:?}", String::from_utf8(remote).unwrap());
-
-  let list = git(["config", "-l"].to_vec()).stdout;
-
-  println!("{:?}", String::from_utf8(list).unwrap());
 }
 
 pub fn get_github_api_headers(token: String) -> HeaderMap {
@@ -78,15 +70,16 @@ pub async fn github_open_pull_request(
 
   let url = format!("{}/pulls", repo_url);
 
-  client
+  let response = client
     .post(url)
     .body(body)
     .headers(headers)
     .send()
     .await
-    .expect("Failed to create pull request");
+    .expect("Failed to create pull request")
+    .text();
 
-  println!("Create pull request success!");
+  println!("pull request response: {:?}", response.await);
 }
 
 pub async fn github_get_commits_in_pr(pr_number: i64, token: String) -> Vec<String> {

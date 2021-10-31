@@ -3,6 +3,7 @@ mod helpers;
 
 use crate::github_event::GithubEventAction;
 use helpers::github_get_commits_in_pr;
+use std::time::SystemTime;
 use std::{env, fs};
 
 use helpers::*;
@@ -14,14 +15,15 @@ async fn main() {
   git_setup(token.clone());
 
   let github_event_path = env::var_os("GITHUB_EVENT_PATH").unwrap();
-  let github_event = fs::read_to_string(github_event_path).expect("read to string is failed");
+  let github_event_string =
+    fs::read_to_string(github_event_path).expect("read to string is failed");
 
-  let res: GithubEventAction =
-    serde_json::from_str(&github_event).expect("convert github event is failed");
+  let github_event: GithubEventAction =
+    serde_json::from_str(&github_event_string).expect("convert to github event is failed");
 
-  let base_branch = res.pull_request.base._ref;
+  let base_branch = github_event.pull_request.base._ref;
 
-  let pr_number = res.number;
+  let pr_number = github_event.number;
 
   let new_branch_name =
     create_new_branch_by_commits(base_branch.clone(), pr_number, token.clone()).await;
@@ -35,21 +37,19 @@ async fn main() {
     "test1".to_string(),
   )
   .await;
-
-  println!("Hello, world!");
 }
 
 async fn create_new_branch_by_commits(to_branch: String, pr_number: i64, token: String) -> String {
   let commits = github_get_commits_in_pr(pr_number, token).await;
 
-  let new_branch_name = "zyh/test-2";
+  let new_branch_name = format!("bot/auto-pick-{}-{:?}", to_branch, SystemTime::now());
   let origin_to_branch_name = format!("origin/{}", to_branch);
 
   git(
     [
       "switch",
       "-c",
-      new_branch_name,
+      new_branch_name.as_str(),
       origin_to_branch_name.as_str(),
     ]
     .to_vec(),
