@@ -58,7 +58,7 @@ async fn create_new_branch_by_commits(to_branch: String, pr_number: i64) -> Stri
 
   println!("switch response: {:?}", String::from_utf8(response.stderr));
 
-  let branch = git(["branch"].to_vec()).stdout;
+  let branch = git(["branch", "-a"].to_vec()).stdout;
 
   println!("all branch: {:?}", String::from_utf8(branch).unwrap());
 
