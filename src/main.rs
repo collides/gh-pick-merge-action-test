@@ -28,7 +28,7 @@ async fn main() {
   let new_branch_name =
     create_new_branch_by_commits(base_branch.clone(), pr_number, token.clone()).await;
 
-  let pr_title = format!("chore: backport {}", pr_number);
+  let pr_title = format!("chore: auto pick {}", pr_number);
 
   let body = "auto pick merge".to_string();
 
@@ -60,25 +60,7 @@ async fn create_new_branch_by_commits(to_branch: String, pr_number: i64, token: 
     git(["cherry-pick", commit_hash.as_str()].to_vec());
   }
 
+  git(["push", "-u", "origin", new_branch_name.as_str()].to_vec());
+
   new_branch_name.to_string()
-}
-
-#[test]
-fn test_push() {
-  let push = git(["push", "-u", "origin", "zyh/test1"].to_vec());
-
-  println!("{:?}", String::from_utf8(push.stderr).unwrap());
-}
-
-#[test]
-fn test_date() {
-  let now: DateTime<Utc> = Utc::now();
-
-  println!("UTC now is: {}", now);
-  println!("UTC now in RFC 2822 is: {}", now.to_rfc2822());
-  println!("UTC now in RFC 3339 is: {}", now.to_rfc3339());
-  println!(
-    "UTC now in a custom format is: {}",
-    now.format("%a %b %e %T %Y")
-  );
 }
