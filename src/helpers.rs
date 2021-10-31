@@ -31,7 +31,7 @@ pub fn git_setup(github_token: String) {
 
   let url = format!("https://{}:{}@github.com/{}.git", actor, github_token, repo);
 
-  git(["remote", "set-url", "--push", "origin", url.as_str()].to_vec());
+  git(["remote", "set-url", "origin", url.as_str()].to_vec());
 
   // git(["config", "user.email", "action@github.com"].to_vec());
   // git(["config", "user.name", "github action"].to_vec());
@@ -39,6 +39,11 @@ pub fn git_setup(github_token: String) {
   let remote = git(["remote", "-v"].to_vec()).stdout;
 
   println!("{:?}", String::from_utf8(remote).unwrap());
+
+
+  let list = git(["config", "-l"].to_vec()).stdout;
+
+  println!("{:?}", String::from_utf8(list).unwrap());
 
 }
 
