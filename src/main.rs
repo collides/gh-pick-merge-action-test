@@ -8,18 +8,22 @@ use std::{env, fs};
 
 use helpers::*;
 
+fn get_event_action() -> GithubEventAction {
+  let github_event_path = env::var_os("GITHUB_EVENT_PATH").unwrap();
+  let github_event_string =
+    fs::read_to_string(github_event_path).expect("read to string is failed");
+
+  serde_json::from_str::<GithubEventAction>(&github_event_string)
+    .expect("convert to github event is failed")
+}
+
 #[tokio::main]
 async fn main() {
   let token = parse_env("GITHUB_TOKEN");
 
   git_setup(token.clone());
 
-  let github_event_path = env::var_os("GITHUB_EVENT_PATH").unwrap();
-  let github_event_string =
-    fs::read_to_string(github_event_path).expect("read to string is failed");
-
-  let github_event: GithubEventAction =
-    serde_json::from_str(&github_event_string).expect("convert to github event is failed");
+  let github_event = get_event_action();
 
   let base_branch = github_event.pull_request.base._ref;
 
