@@ -64,7 +64,7 @@ pub async fn github_open_pull_request(
   let repo_url = github_event_repo_url();
 
   let body = format!(
-    "{{head:{},base:{},title:{},body:{}}}",
+    r#"{{"head":"{}","base":"{}","title":"{}","body":"{}"}}"#,
     head, base, title, body
   );
 
@@ -72,8 +72,8 @@ pub async fn github_open_pull_request(
 
   let response = client
     .post(url)
-    .body(body)
     .headers(headers)
+    .body(body)
     .send()
     .await
     .expect("Failed to create pull request")
