@@ -94,12 +94,20 @@ pub async fn github_pull_request_push_comment(pr_number: i64, comment: String) {
 
   let url = format!("{}/issues/${}/comments", repo_url, pr_number);
 
-  client
+  let response = client
     .post(url)
     .body(body)
     .send()
     .await
     .expect("Failed to create pull request comment");
+
+    println!(
+      "create comment: {}",
+      response
+        .text()
+        .await
+        .expect("Failed to create pull comment")
+    );
 }
 
 pub async fn github_open_pull_request(head: String, base: String, title: String, body: String) {
