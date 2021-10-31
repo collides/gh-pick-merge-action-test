@@ -25,17 +25,17 @@ async fn main() {
 
   let github_event = get_event_action();
 
-  let base_branch = github_event.pull_request.base._ref;
+  // let base_branch = github_event.pull_request.base._ref;
 
   let pr_number = github_event.number;
 
-  let new_branch_name = create_new_branch_by_commits(base_branch.clone(), pr_number).await;
+  let new_branch_name = create_new_branch_by_commits("develop".to_string(), pr_number).await;
 
   let pr_title = format!("chore: auto pick {}", pr_number);
 
   let body = "auto pick merge".to_string();
 
-  github_open_pull_request(new_branch_name, base_branch, pr_title, body).await;
+  github_open_pull_request(new_branch_name, "develop".to_string(), pr_title, body).await;
 }
 
 async fn create_new_branch_by_commits(to_branch: String, pr_number: i64) -> String {
