@@ -2,8 +2,8 @@ mod github_event;
 mod helpers;
 
 use crate::github_event::GithubEventAction;
+use chrono::prelude::*;
 use helpers::github_get_commits_in_pr;
-use std::time::SystemTime;
 use std::{env, fs};
 
 use helpers::*;
@@ -29,20 +29,18 @@ async fn main() {
     create_new_branch_by_commits(base_branch.clone(), pr_number, token.clone()).await;
 
   let pr_title = format!("chore: backport {}", pr_number);
-  github_open_pull_request(
-    token,
-    new_branch_name,
-    base_branch,
-    pr_title,
-    "test1".to_string(),
-  )
-  .await;
+
+  let body = "auto pick merge".to_string();
+
+  github_open_pull_request(token, new_branch_name, base_branch, pr_title, body).await;
 }
 
 async fn create_new_branch_by_commits(to_branch: String, pr_number: i64, token: String) -> String {
   let commits = github_get_commits_in_pr(pr_number, token).await;
 
-  let new_branch_name = format!("bot/auto-pick-{}-{:?}", to_branch, SystemTime::now());
+  let utc: DateTime<Utc> = Utc::now();
+
+  let new_branch_name = format!("bot/auto-pick-{}-{:?}", to_branch, utc);
   let origin_to_branch_name = format!("origin/{}", to_branch);
 
   git(
@@ -70,4 +68,17 @@ fn test_push() {
   let push = git(["push", "-u", "origin", "zyh/test1"].to_vec());
 
   println!("{:?}", String::from_utf8(push.stderr).unwrap());
+}
+
+#[test]
+fn test_date() {
+  let now: DateTime<Utc> = Utc::now();
+
+  println!("UTC now is: {}", now);
+  println!("UTC now in RFC 2822 is: {}", now.to_rfc2822());
+  println!("UTC now in RFC 3339 is: {}", now.to_rfc3339());
+  println!(
+    "UTC now in a custom format is: {}",
+    now.format("%a %b %e %T %Y")
+  );
 }
