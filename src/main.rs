@@ -60,7 +60,9 @@ async fn create_new_branch_by_commits(to_branch: String, pr_number: i64, token: 
     git(["cherry-pick", commit_hash.as_str()].to_vec());
   }
 
-  git(["push", "-u", "origin", new_branch_name.as_str()].to_vec());
+  let test = git(["push", "-u", "origin", new_branch_name.as_str()].to_vec());
+
+  println!("{:?}", String::from_utf8(test.stderr));
 
   new_branch_name.to_string()
 }
