@@ -43,30 +43,38 @@ async fn create_new_branch_by_commits(to_branch: String, pr_number: i64) -> Stri
 
   let utc: DateTime<Utc> = Utc::now();
 
-  let new_branch_name = "bot/auto-pick";
-  let test_new_branch_name = format!("bot/auto-pick-{}-{:?}", to_branch, utc);
+  let new_branch_name = format!("bot/auto-pick-{}-{:?}", to_branch, utc);
   let origin_to_branch_name = format!("origin/{}", to_branch);
-
-  println!("{}", test_new_branch_name);
 
   git(
     [
       "switch",
       "-c",
-      new_branch_name,
+      new_branch_name.as_str(),
       origin_to_branch_name.as_str(),
     ]
     .to_vec(),
   );
 
-  println!("{}", test_new_branch_name);
+  let branch = git(["branch"].to_vec()).stdout;
+
+  println!("all branch: {:?}", String::from_utf8(branch).unwrap());
+
+  println!("new branch name:{}", new_branch_name);
 
   for commit_hash in commits {
     println!("commit: {:?}", commit_hash);
     git(["cherry-pick", commit_hash.as_str()].to_vec());
   }
 
-  let test = git(["push", "-u", "origin", new_branch_name].to_vec());
+  let current_branch = git(["rev-parse", "--abbrev-ref", "HEAD"].to_vec()).stdout;
+
+  println!(
+    "current_branch: {:?}",
+    String::from_utf8(current_branch).unwrap()
+  );
+
+  let test = git(["push", "-u", "origin", new_branch_name.as_str()].to_vec());
 
   println!("{:?}", String::from_utf8(test.stderr));
 
