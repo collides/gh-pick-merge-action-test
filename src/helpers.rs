@@ -33,8 +33,8 @@ pub fn git_setup(github_token: String) {
 
   git(["remote", "set-url", "origin", url.as_str()].to_vec());
 
-  // git(["config", "user.email", "action@github.com"].to_vec());
-  // git(["config", "user.name", "github action"].to_vec());
+  git(["config", "user.email", "action@github.com"].to_vec());
+  git(["config", "user.name", "github action"].to_vec());
 
   let remote = git(["remote", "-v"].to_vec()).stdout;
 
