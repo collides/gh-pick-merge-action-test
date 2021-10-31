@@ -40,7 +40,6 @@ pub fn fetch_github_api_client() -> Client {
 pub fn git_setup(github_token: String) {
   let repo = parse_env("GITHUB_REPOSITORY");
   let actor = parse_env("GITHUB_ACTOR");
-  // https://github.com/collides/gh-pick-merge-action.git
 
   let url = format!("https://{}:{}@github.com/{}.git", actor, github_token, repo);
 
