@@ -32,16 +32,18 @@ pub fn github_event_repo_url() -> String {
 
 pub fn git(args: Vec<&str>) -> Option<Output> {
   let output = Command::new("git")
-    .args(args)
+    .args(args.clone())
     .output()
-    .expect("git command failed");
+    .expect("Git command failed");
 
   if output.status.success() == false {
     println!(
-      "git command failed: {:?}, {:?}",
+      "Git command failed: {:?}, {:?}, args: {:?}",
       output.status,
-      String::from_utf8(output.stderr)
+      String::from_utf8(output.stderr),
+      args,
     );
+
     return None;
   }
 
