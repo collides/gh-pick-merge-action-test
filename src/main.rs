@@ -46,7 +46,7 @@ async fn create_new_branch_by_commits(to_branch: String, pr_number: i64) -> Stri
   let new_branch_name = format!("bot/auto-pick-{}-{:?}", to_branch, utc);
   let origin_to_branch_name = format!("origin/{}", to_branch);
 
-  git(
+  let response = git(
     [
       "switch",
       "-c",
@@ -55,6 +55,8 @@ async fn create_new_branch_by_commits(to_branch: String, pr_number: i64) -> Stri
     ]
     .to_vec(),
   );
+
+  println!("switch response: {:?}", String::from_utf8(response.stderr));
 
   let branch = git(["branch"].to_vec()).stdout;
 
