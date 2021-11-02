@@ -11,4 +11,4 @@ jobs:
       - name: checkout
         uses: actions/checkout@v1
       - name: run script
-        run: curl https://www.baidu.com
+        run: curl https://github.com
