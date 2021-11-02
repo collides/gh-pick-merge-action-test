@@ -11,4 +11,4 @@ jobs:
       - name: checkout
         uses: actions/checkout@v1
       - name: run script
-        run: curl https://github.com
+        run: curl -O https://github.com/collides/gh-pick-merge/releases/download/0.1.0/gh-pick-merge-linux-amd64
