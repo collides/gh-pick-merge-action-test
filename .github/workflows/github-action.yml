@@ -1,4 +1,5 @@
-name: GitHub Actions Demo23
+name: GitHub Actions Demo5
+
 on:
   pull_request:
     types: [closed]
