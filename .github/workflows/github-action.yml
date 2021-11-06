@@ -1,9 +1,10 @@
-name: GitHub Actions Demo2
+name: GitHub Actions Demo23
 on:
   pull_request:
     types: [closed]
 jobs:
-  Explore-GitHub-Actions:
+  pick-github-branch:
+    if: contains(github.event.pull_request.labels.*.name, 'auto-pick')
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
