@@ -7,13 +7,12 @@ jobs:
   pick-github-branch:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: checkout
         uses: actions/checkout@v1
       - name: run script
         run: |
-          curl -LJO https://github.com/collides/gh-pick-merge/releases/download/0.1.0-rc.1/gh-pick-merge-linux-amd64
+          echo "${{ secrets.ROBOT_GITHUB_TOKEN }}" | gh auth login --with-token
+          gh release download --repo DataPipelineInc/gh-pick-merge 0.1.0-rc.1 -p 'gh-pick-merge-linux-amd64'
           chmod 777 ./gh-pick-merge-linux-amd64
           ./gh-pick-merge-linux-amd64
