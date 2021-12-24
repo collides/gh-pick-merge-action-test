@@ -1,2 +1,2 @@
-# gh-pick-merge-action1
+# gh-pick-merge-action
 
