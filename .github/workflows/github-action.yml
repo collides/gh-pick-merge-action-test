@@ -10,8 +10,6 @@ jobs:
     env:
       GITHUB_ACTION_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: checkout
-        uses: actions/checkout@v1
       - name: run script
         run: |
           echo "${{ secrets.ROBOT_GITHUB_TOKEN }}" | gh auth login --with-token
