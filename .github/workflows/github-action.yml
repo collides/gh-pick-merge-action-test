@@ -5,7 +5,7 @@ on:
     types: [closed]
 jobs:
   pick-github-branch:
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'pick-merge')
     runs-on: ubuntu-latest
     env:
       GITHUB_ACTION_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -15,6 +15,6 @@ jobs:
       - name: run script
         run: |
           echo "${{ secrets.ROBOT_GITHUB_TOKEN }}" | gh auth login --with-token
-          gh release download --repo DataPipelineInc/gh-pick-merge 0.1.0-rc.1 -p 'gh-pick-merge-linux-amd64'
+          gh release download --repo collides/gh-pick-merge 0.1.0-rc.1 -p 'gh-pick-merge-linux-amd64'
           chmod 777 ./gh-pick-merge-linux-amd64
           ./gh-pick-merge-linux-amd64
