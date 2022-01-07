@@ -5,7 +5,7 @@ on:
     types: [closed]
 jobs:
   pick-github-branch:
-    if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'pick-merge')
+    if: github.event.pull_request.merged == true && contains(join(github.event.pull_request.labels.*.name), 'pick-to')
     runs-on: ubuntu-latest
     env:
       GITHUB_ACTION_TOKEN: ${{ secrets.GITHUB_TOKEN }}
