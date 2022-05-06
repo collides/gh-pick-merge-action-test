@@ -2,11 +2,6 @@
 
 <!-- 在这里说明此 PR 的主要改动 -->
 
-#### Confluence DIP/Jira Issue 链接
-
-- http://doc.datapipeline.com/pages/viewpage.action?pageId=14549983
-- http://jira.datapipeline.com/browse/DP-1000
-
 ### Check List
 
 在 Request Review 前，我已完成以下条目：
